@@ -2,7 +2,7 @@ import random
 import socket
 import threading
 import time
-host = '192.168.178.173'
+host = '127.0.0.1'
 port = 5000
 
 plays = {
