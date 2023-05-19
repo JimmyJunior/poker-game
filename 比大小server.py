@@ -1,7 +1,7 @@
 import pickle
 from socket import *
 import threading
-from shuffle import *
+from test_shuffle import *
 import time
 SERVER = '127.0.0.1' # 伺服器IP地址
 PORT = 5000  
