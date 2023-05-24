@@ -2,7 +2,7 @@ import random
 import socket
 import threading
 import time
-host = '127.0.0.1'
+host = '192.168.178.173'
 port = 5000
 
 plays = {
@@ -47,7 +47,7 @@ def valuenumber(x):
     
 
 def getpoker(x):
-    return color(x) + value(x) + ' '
+    return color(x) + value(x)
 def deal_card():
     card = random.choice(poker)
     poker.remove(card)
@@ -82,7 +82,7 @@ def check2(c,b):
  
 #先發兩張牌給玩家
 
-def main():
+def start():
     class player:
         def __init__(self,name,poker,a):
             self.name=name
@@ -416,7 +416,7 @@ def main():
                 a.append(getpoker(b[i]))
             tttt = ''
             for i in range(len(c)):
-                tttt += getpoker(c[i])
+                tttt = tttt + getpoker(c[i]) + ' '
             broadcast(tttt)
             if(send2 == 2):
                 broadcast('單張')
@@ -510,11 +510,12 @@ def main():
     #number = str([' '+str(i)+' ' for i in range(1,len(playertotal)+1)])
     #onlysend(a,"索引值:"+str(number))
     #onlysend(a,"你的牌:"+str(player_1))
+    onlysend(a,'剩下的牌:'+str(player_1)) 
     if status ==  1:
         while len(player1total) !=0 and len(playertotal) !=0 and len(player2total) != 0 :
             #number = str([i for i in range(1,len(playertotal))])
             #onlysend(a,number)
-            onlysend(a,player_1)
+            onlysend(a,'剩下的牌:' + player_1)
             broadcast('[Player1]出牌')
             #userinputarray = player_2.receive(playertotal,userinputarray,)    #收第一位玩家訊息
             userinputarray = player_2.receive(playertotal,userinputarray,'Player1') 
@@ -621,14 +622,14 @@ def main():
                             t = player_2.compare(e,userinputarray,returnvalue3,returnvalue,playertotal,player_1)
                 
             #print('e',e)                                         #檢查
-            onlysend(a,player_1)                         #剩下的手牌
+            onlysend(a,'剩下的牌:'+str(player_1))                         #剩下的手牌
             if len(playertotal) == 1:
                 broadcast('[Player1]只剩一張!!')
             elif len(playertotal) == 0:
                 break         
                         
             #onlysend(b,player_3) #b牌型
-            onlysend(b,player_3)  
+            onlysend(b,'剩下的牌:' + player_3)  
             broadcast('[Player2]出牌')
             userinputarray2 = player_2.receive(player1total,userinputarray2,'Player2')  #收第二位玩家訊息
             if(playerrecord[0] == 1 and playerrecord[2] == 1):                       #若第一位玩家的狀態為1 (pass) 則把狀態改回0 把e清空
@@ -711,13 +712,13 @@ def main():
                         #print('l')
                             t = player_2.compare(e,userinputarray2,returnvalue,returnvalue2,player1total,player_3)
             #print('e',e)
-            onlysend(b,player_3)      
+            onlysend(b,'剩下的牌:' + player_3)      
             if len(player1total) == 1:
                 broadcast('[Player2]只剩一張!!')
             elif len(player1total) == 0:
                 break     
                         
-            onlysend(c,player_5) 
+            onlysend(c,'剩下的牌:' + player_5) 
             broadcast('[Player3]出牌')
             userinputarray3 = player_2.receive(player2total,userinputarray3,'Player3')   #收第二位玩家訊息
             if(playerrecord[0] == 1 and playerrecord[1] == 1):                       #若第一位玩家的狀態為1 (pass) 則把狀態改回0 把e清空
@@ -800,7 +801,7 @@ def main():
                             #print('l')
                             t = player_2.compare(e,userinputarray3,returnvalue2,returnvalue3,player2total,player_5)
             #print('e',e)
-            onlysend(c,player_5)
+            onlysend(c,'剩下的牌:' + player_5)
             if len(player2total) == 1:
                 broadcast('[Player3]只剩一張!!')
             elif len(player2total) == 0:
@@ -809,7 +810,7 @@ def main():
     elif status ==2:
         while len(player1total) !=0 and len(playertotal) !=0 and len(player2total) !=0 :
 
-            onlysend(b,player_3) 
+            onlysend(b,'剩下的牌:' + player_3) 
             broadcast('[Player2]出牌')
 
             userinputarray2 = player_2.receive(player1total,userinputarray2,'Player2')   #收第二位玩家訊息
@@ -904,7 +905,7 @@ def main():
                         #print('l')
                             t = player_2.compare(e,userinputarray2,returnvalue,returnvalue2,player1total,player_3)
             #print('e',e)
-            onlysend(b,player_3) 
+            onlysend(b,'剩下的牌:' + player_3) 
             if len(player1total) == 1:
                 broadcast('[Player2]只剩一張!!')
             elif len(player1total) == 0:
@@ -912,7 +913,7 @@ def main():
             
             
             
-            onlysend(c,player_5) 
+            onlysend(c,'剩下的牌:' + player_5) 
             broadcast('[Player3]出牌')
 
             userinputarray3 = player_2.receive(player2total,userinputarray3,'Player3')   #收第三位玩家訊息
@@ -992,13 +993,13 @@ def main():
                     #print('e',e)
                     #print('player_5',c,player_5)
             #print('e',e)
-            onlysend(c,player_5) 
+            onlysend(c,'剩下的牌:' + player_5) 
             if len(player2total) == 1:
                 broadcast('[Player3]只剩一張!!')
             elif len(player2total) == 0:
                 break
             
-            onlysend(a,player_1)
+            onlysend(a,'剩下的牌:' + player_1)
             broadcast('[Player1]出牌')
 
             userinputarray = player_2.receive(playertotal,userinputarray,'Player1')    #收第一位玩家訊息
@@ -1078,7 +1079,7 @@ def main():
                 #print('e',e)                                         #檢查
                 #print('player_1',a,player_1)                         #剩下的手牌
             #print('e',e)                                         #檢查
-            onlysend(a,player_1)                         #剩下的手牌
+            onlysend(a,'剩下的牌:' + player_1)                         #剩下的手牌
             if len(playertotal) == 1:
                 broadcast('[Player1]只剩一張!!')
             elif len(playertotal) == 0:
@@ -1088,7 +1089,7 @@ def main():
         while len(player1total) !=0 and len(playertotal) !=0 and len(player2total) != 0 :
             
                         
-            onlysend(c,player_5) 
+            onlysend(c,'剩下的牌:' + player_5) 
             broadcast('[Player3]出牌')
 
             userinputarray3 = player_2.receive(player2total,userinputarray3,'Player3')   #收第二位玩家訊息
@@ -1184,7 +1185,7 @@ def main():
                             #print('l')
                             t = player_2.compare(e,userinputarray3,returnvalue2,returnvalue3,player2total,player_5)
             #print('e',e)
-            onlysend(c,player_5)
+            onlysend(c,'剩下的牌:' + player_5)
             if len(player2total) == 1:
                 broadcast('[Player3]只剩一張!!')
             elif len(player2total) == 0:
@@ -1194,7 +1195,7 @@ def main():
             
             
             
-            onlysend(a,player_1) 
+            onlysend(a,'剩下的牌:' + player_1) 
             broadcast('[Player1]出牌')
 
             userinputarray = player_2.receive(playertotal,userinputarray,a)    #收第一位玩家訊息
@@ -1272,13 +1273,13 @@ def main():
                 #print('e',e)                                         #檢查
                 #print('player_1',a,player_1)                         #剩下的手牌
             #print('e',e)                                         #檢查
-            onlysend(a,player_1)                     #剩下的手牌
+            onlysend(a,'剩下的牌:' + player_1)                     #剩下的手牌
             if len(playertotal) == 1:
                 broadcast('[Player1]只剩一張!!')
             elif len(playertotal) == 0:
                 break
                 
-            onlysend(b,player_3)
+            onlysend(b,'剩下的牌:' + player_3)
             broadcast('[Player2]出牌')
             userinputarray2 = player_2.receive(player1total,userinputarray2,'Player2')   #收第二位玩家訊息
             if(playerrecord[0] == 1 and playerrecord[2] == 1):                       #若第一位玩家的狀態為1 (pass) 則把狀態改回0 把e清空
@@ -1357,7 +1358,7 @@ def main():
                     #print('e',e)
                     #print('player_3',b,player_3)       
             #print('e',e)
-            onlysend(b,player_3) 
+            onlysend(b,'剩下的牌:' + player_3) 
             if len(player1total) == 1:
                 broadcast('[Player2]只剩一張!!')
             elif len(player1total) == 0:
@@ -1392,9 +1393,11 @@ def sendrev(name,message):
     return re.split()
 
 def fix(message):
+    #number = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫', '⑬']
     chat = []
     for i in message:
-        chat.append(str(message.index(i)+1) + ': ' + str(i))
+        print(message.index(i))
+        chat.append(f'[{message.index(i)+1}]' + str(i))
     return chat
 
 def onlysend(name,message):
@@ -1409,7 +1412,7 @@ def onlysend(name,message):
         IP.send(message.encode())
     time.sleep(0.5) 
 
-def waiting():
+def main():
     while True:
         print('wait')
         client_socket, address = server_socket.accept()
@@ -1443,10 +1446,10 @@ def broadcast(message):
 def start_game():
     broadcast('Game is starting.\n')
     broadcast('Dealing cards...')
-    main()
-    waiting()
+    start()
+    #waiting()
 
 if __name__ == '__main__':
-    waiting()
+    main()
 
 
