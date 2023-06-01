@@ -2,7 +2,7 @@ import random
 import socket
 import threading
 import time
-host = '192.168.178.173'
+host = '192.168.171.91'
 port = 5000
 
 plays = {
@@ -101,58 +101,29 @@ def start():
             
         def receive(self,b,c,name):
             c = sendrev(name, 1)
-            #c = sendrev(name, '請輸入牌型:(若要第一張 --> 1 第二張 --> 2 以此類推，中間以空格間隔)')
-            #onlysend(name, c)
-            #onlysend(name, len(c))
             if(len(c) != 0):             #避免玩家一直按enter
                 if(c[0] == 'p'):
                     #print(c)
                     return c
-            '''print(check3(c))
-            while(check3(c) == False):
-                print(check3(c))
-                c = input('請重新輸入:').split()
-            print('test')'''
             while ((len(c)!=1 and len(c)!=2 and len(c)!=5)  or (check(c) or not check2(c,b))) :         #避免玩家亂輸入
                 c = sendrev(name ,2)
-        
-                #print(check3(c))
-                #print((len(c)!=1 and len(c)!=2 and len(c)!=5))
-                #print((check(c) or not check2(c,b)))
                 if(len(c) != 0):
                     if(c[0] == 'p'):
-                        #print(c)
                         return c
-                #print(len(c))
-            #print(c)
-            #print(check(c))
             d=len(c)
             for i in range(d):
-                #b.remove(b[c[i]])
-                #c[i] = int(valuenumber(b[int(c[i])-1]))
                 c[i] = int(b[int(c[i])-1])                      #把玩家輸入的位置找出來 以0-51表示
-                #c.append(int(valuenumber(b[int(c[i])-1])))
-            #print(c)
             return c
         
             
 
         def judge(self,c):       #a是儲存玩家輸入的數字的list    b是玩家牌
-        #先傳入陣列(x[])
+        #先傳入陣列(c[])
         #讀取陣列元素，長度 5 -> 鐵支 葫蘆 順子 2 -> 一對   1 -> 單張
-        #判斷牌型
-        #是否比前一個大
-        #return牌型 ex:    33344,3葫蘆
-        #輸入
-            #print(c)
-            #if(c[0] == 'p'):
-                
-                    
             c.sort()
-            
             temp=[]
             for i in range(len(c)):
-                temp.append(valuenumber(c[i]))           #轉成純數字(黑桃13 -->13  紅心A --> 1)
+                temp.append(valuenumber(c[i]))           #轉成純數字(黑桃13 --> 13  紅心A --> 1)
             if len(c)==1:
                 return 2
             if len(c)==2:
@@ -162,33 +133,41 @@ def start():
                     return -1
             else:
                 if(temp[0] == temp[1] and temp[1] == temp[2] and temp[2] != temp[3] and temp[3] == temp[4]):
-                    return 4
+                    return 4                               # 葫蘆
                 elif(temp[0] == temp[1] and temp[1] != temp[2] and temp[2] == temp[3] and temp[3] == temp[4]):
-                    return 5
+                    return 5                               # 葫蘆
                 elif(temp[0] == temp[1] and temp[1] == temp[2] and temp[2] == temp[3] and temp[3] != temp[4]):
-                    return 7
+                    return 7                               # 鐵支
                 elif(temp[0] != temp[1] and temp[1] == temp[2] and temp[2] == temp[3] and temp[3] == temp[4]):
-                    return 8
+                    return 8                               # 鐵支
                 elif(temp[0] == 2 and temp[1] == 3 and temp[2] == 4 and temp[3] ==5 and temp[4] == 6):
-                    return 10                              #----> 最大的順子 2 3 4 5 6
+                    if c[1]-c[0] == c[2]-c[1] and c[3]-c[2] == c[2]-c[1] and c[4]-c[3] == c[3]-c[2] and c[1]-c[0] == 4:
+                        return 13
+                    else:
+                        return 10                              #----> 最大的順子 2 3 4 5 6
                 elif(temp[-1] >= 5):
                     if(temp[1]-temp[0] == temp[2]-temp[1] and temp[3]-temp[2] == temp[2]-temp[1] and temp[4]-temp[3] == temp[3]-temp[2]):
-                        return 6                                #1 2 3 4 5      ~   9 10 11 12 13 
+                        if c[1]-c[0] == c[2]-c[1] and c[3]-c[2] == c[2]-c[1] and c[4]-c[3] == c[3]-c[2] and c[1]-c[0] == 4:
+                            return 11
+                        else:
+                            return 6                                #1 2 3 4 5      ~   9 10 11 12 13 
                     elif(temp[0] == 1 and temp[1] == 10 and temp[2] == 11 and temp[3] == 12 and temp[4] == 13):
-                        return 9                                #10 11 12 13 1
+                        if c[1]-c[0] == c[2]-c[1] and c[3]-c[2] == c[2]-c[1] and c[4]-c[3] == c[3]-c[2] and c[1]-c[0] == 4:
+                            return 12
+                        else:
+                            return 9                                #10 11 12 13 1
                     else:
                         return -1
-                
                 else :
                     return -1
-        def compare(self,e,c,send,send2,b,a):    
-            if(len(e) == 0):
-                if send2 == -1:
+        def compare(self,e,c,send,send2,b,a):    # e:前一個玩家出的牌 c:現在玩家出的牌 
+            if(len(e) == 0):                     # send:前一個玩家judge的return值 send2:前一個玩家judge的return值
+                if send2 == -1:                  # compare:和前一個玩家的牌比大小
                     return -1
                 else:
                     for i in range(len(c)):
                         e.append(c[i])     
-                player_2.delete(a,b,c,send2)
+                    player_2.delete(a,b,c,send2)
             elif(send == send2):
                 if(send == 2):
                     if c[0] < 8 and e[0] >= 8:
@@ -405,12 +384,6 @@ def start():
                 #print('b',b)
                 #print('c',c)
                 b.remove(c[i])
-                #print('b after',b)
-                #print('c after',c)
-                #index = b.index(c[i])
-                #print(index)
-                #b.pop(index)
-                
             a.clear()
             for i in range(len(b)):
                 a.append(getpoker(b[i]))
@@ -495,7 +468,6 @@ def start():
             boss = playertotal[i]
             status = 1
             break
-
     for i in range(13):
         if player1total[i] >= 8 and player1total[i] < boss:
             boss = player1total[i]
@@ -506,16 +478,11 @@ def start():
             boss = player2total[i]
             status = 3
             break
-    #print(status,boss)
-    #number = str([' '+str(i)+' ' for i in range(1,len(playertotal)+1)])
-    #onlysend(a,"索引值:"+str(number))
-    #onlysend(a,"你的牌:"+str(player_1))
-    onlysend(a,'剩下的牌:'+str(player_1)) 
     if status ==  1:
         while len(player1total) !=0 and len(playertotal) !=0 and len(player2total) != 0 :
             #number = str([i for i in range(1,len(playertotal))])
             #onlysend(a,number)
-            onlysend(a,'剩下的牌:' + player_1)
+            onlysend(a,player_1)
             broadcast('[Player1]出牌')
             #userinputarray = player_2.receive(playertotal,userinputarray,)    #收第一位玩家訊息
             userinputarray = player_2.receive(playertotal,userinputarray,'Player1') 
@@ -536,14 +503,7 @@ def start():
                         onlysend('Player1', '你不能pass了,輪到你出牌!')
                         userinputarray = player_2.receive(playertotal,userinputarray,'Player1')  
                     returnvalue = player_2.judge(userinputarray)     #send值
-                    t = player_2.compare(e,userinputarray,returnvalue,returnvalue,playertotal,player_1)
-            
-                '''print('e',e)
-                print('player_1',a,player_1)
-                if len(playertotal) == 1:
-                    print('player_1',a,'只剩一張!!')
-                elif len(playertotal) == 0:
-                    break'''        
+                    t = player_2.compare(e,userinputarray,returnvalue,returnvalue,playertotal,player_1)   
                         
             elif(playerrecord[2] == 1):              #若上一個玩家pass
                 if (userinputarray[0] == 'p'):
@@ -568,13 +528,7 @@ def start():
                             returnvalue = player_2.judge(userinputarray)     #send值
                             
                             #print('l')
-                            t = player_2.compare(e,userinputarray,returnvalue2,returnvalue,playertotal,player_1)
-                #print('e',e)
-                #print('player_1',a,player_1)  
-                '''if len(playertotal) == 1:
-                    print('player_1',a,'只剩一張!!')
-                elif len(playertotal) == 0:
-                    break'''         
+                            t = player_2.compare(e,userinputarray,returnvalue2,returnvalue,playertotal,player_1) 
                         
             else:
                 if count == 0:
@@ -625,11 +579,13 @@ def start():
             onlysend(a,'剩下的牌:'+str(player_1))                         #剩下的手牌
             if len(playertotal) == 1:
                 broadcast('[Player1]只剩一張!!')
+            elif len(playertotal) == 2:
+                broadcast('[Player1]還有兩張!!')
             elif len(playertotal) == 0:
                 break         
                         
             #onlysend(b,player_3) #b牌型
-            onlysend(b,'剩下的牌:' + player_3)  
+            onlysend(b,player_3)  
             broadcast('[Player2]出牌')
             userinputarray2 = player_2.receive(player1total,userinputarray2,'Player2')  #收第二位玩家訊息
             if(playerrecord[0] == 1 and playerrecord[2] == 1):                       #若第一位玩家的狀態為1 (pass) 則把狀態改回0 把e清空
@@ -712,13 +668,15 @@ def start():
                         #print('l')
                             t = player_2.compare(e,userinputarray2,returnvalue,returnvalue2,player1total,player_3)
             #print('e',e)
-            onlysend(b,'剩下的牌:' + player_3)      
+            onlysend(b,'剩下的牌:' + str(player_3))      
             if len(player1total) == 1:
                 broadcast('[Player2]只剩一張!!')
+            elif len(player1total) == 2:
+                broadcast('[Player2]還有兩張!!')
             elif len(player1total) == 0:
                 break     
                         
-            onlysend(c,'剩下的牌:' + player_5) 
+            onlysend(c,player_5) 
             broadcast('[Player3]出牌')
             userinputarray3 = player_2.receive(player2total,userinputarray3,'Player3')   #收第二位玩家訊息
             if(playerrecord[0] == 1 and playerrecord[1] == 1):                       #若第一位玩家的狀態為1 (pass) 則把狀態改回0 把e清空
@@ -801,16 +759,18 @@ def start():
                             #print('l')
                             t = player_2.compare(e,userinputarray3,returnvalue2,returnvalue3,player2total,player_5)
             #print('e',e)
-            onlysend(c,'剩下的牌:' + player_5)
+            onlysend(c,'剩下的牌:' + str(player_5))
             if len(player2total) == 1:
                 broadcast('[Player3]只剩一張!!')
+            elif len(player2total) == 2:
+                broadcast('[Player3]還有兩張!!')
             elif len(player2total) == 0:
                 break     
 
     elif status ==2:
         while len(player1total) !=0 and len(playertotal) !=0 and len(player2total) !=0 :
 
-            onlysend(b,'剩下的牌:' + player_3) 
+            onlysend(b,player_3) 
             broadcast('[Player2]出牌')
 
             userinputarray2 = player_2.receive(player1total,userinputarray2,'Player2')   #收第二位玩家訊息
@@ -905,15 +865,17 @@ def start():
                         #print('l')
                             t = player_2.compare(e,userinputarray2,returnvalue,returnvalue2,player1total,player_3)
             #print('e',e)
-            onlysend(b,'剩下的牌:' + player_3) 
+            onlysend(b,'剩下的牌:' + str(player_3)) 
             if len(player1total) == 1:
                 broadcast('[Player2]只剩一張!!')
+            elif len(player1total) == 2:
+                broadcast('[Player2]還有兩張!!')
             elif len(player1total) == 0:
                 break        
             
             
             
-            onlysend(c,'剩下的牌:' + player_5) 
+            onlysend(c,player_5) 
             broadcast('[Player3]出牌')
 
             userinputarray3 = player_2.receive(player2total,userinputarray3,'Player3')   #收第三位玩家訊息
@@ -993,13 +955,15 @@ def start():
                     #print('e',e)
                     #print('player_5',c,player_5)
             #print('e',e)
-            onlysend(c,'剩下的牌:' + player_5) 
+            onlysend(c,'剩下的牌:' + str(player_5)) 
             if len(player2total) == 1:
                 broadcast('[Player3]只剩一張!!')
+            elif len(player2total) == 2:
+                broadcast('[Player3]還有兩張!!')
             elif len(player2total) == 0:
                 break
             
-            onlysend(a,'剩下的牌:' + player_1)
+            onlysend(a,player_1)
             broadcast('[Player1]出牌')
 
             userinputarray = player_2.receive(playertotal,userinputarray,'Player1')    #收第一位玩家訊息
@@ -1079,9 +1043,11 @@ def start():
                 #print('e',e)                                         #檢查
                 #print('player_1',a,player_1)                         #剩下的手牌
             #print('e',e)                                         #檢查
-            onlysend(a,'剩下的牌:' + player_1)                         #剩下的手牌
+            onlysend(a,'剩下的牌:' + str(player_1))                         #剩下的手牌
             if len(playertotal) == 1:
                 broadcast('[Player1]只剩一張!!')
+            elif len(playertotal) == 2:
+                broadcast('[Player1]還有兩張!!')
             elif len(playertotal) == 0:
                 break
                 
@@ -1089,7 +1055,7 @@ def start():
         while len(player1total) !=0 and len(playertotal) !=0 and len(player2total) != 0 :
             
                         
-            onlysend(c,'剩下的牌:' + player_5) 
+            onlysend(c,player_5) 
             broadcast('[Player3]出牌')
 
             userinputarray3 = player_2.receive(player2total,userinputarray3,'Player3')   #收第二位玩家訊息
@@ -1185,9 +1151,11 @@ def start():
                             #print('l')
                             t = player_2.compare(e,userinputarray3,returnvalue2,returnvalue3,player2total,player_5)
             #print('e',e)
-            onlysend(c,'剩下的牌:' + player_5)
+            onlysend(c,'剩下的牌:' + str(player_5))
             if len(player2total) == 1:
                 broadcast('[Player3]只剩一張!!')
+            elif len(player2total) == 2:
+                broadcast('[Player3]還有兩張!!')
             elif len(player2total) == 0:
                 break  
             
@@ -1195,7 +1163,7 @@ def start():
             
             
             
-            onlysend(a,'剩下的牌:' + player_1) 
+            onlysend(a,player_1) 
             broadcast('[Player1]出牌')
 
             userinputarray = player_2.receive(playertotal,userinputarray,a)    #收第一位玩家訊息
@@ -1273,13 +1241,15 @@ def start():
                 #print('e',e)                                         #檢查
                 #print('player_1',a,player_1)                         #剩下的手牌
             #print('e',e)                                         #檢查
-            onlysend(a,'剩下的牌:' + player_1)                     #剩下的手牌
+            onlysend(a,'剩下的牌:' + str(player_1))                     #剩下的手牌
             if len(playertotal) == 1:
                 broadcast('[Player1]只剩一張!!')
+            elif len(playertotal) == 2:
+                broadcast('[Player1]還有兩張!!')
             elif len(playertotal) == 0:
                 break
                 
-            onlysend(b,'剩下的牌:' + player_3)
+            onlysend(b,player_3)
             broadcast('[Player2]出牌')
             userinputarray2 = player_2.receive(player1total,userinputarray2,'Player2')   #收第二位玩家訊息
             if(playerrecord[0] == 1 and playerrecord[2] == 1):                       #若第一位玩家的狀態為1 (pass) 則把狀態改回0 把e清空
@@ -1358,21 +1328,26 @@ def start():
                     #print('e',e)
                     #print('player_3',b,player_3)       
             #print('e',e)
-            onlysend(b,'剩下的牌:' + player_3) 
+            onlysend(b,'剩下的牌:' + str(player_3)) 
             if len(player1total) == 1:
                 broadcast('[Player2]只剩一張!!')
+            elif len(player1total) == 2:
+                broadcast('[Player2]還有兩張!!')
             elif len(player1total) == 0:
                 break    
                     
     if len(playertotal) == 0:
-        broadcast('![Player1] WIN!')
-        socket.close()
+        broadcast('[Player1] WIN!')
+        broadcast('3')
+        shut()
     elif len(player1total) == 0:    
-        broadcast('![Player2] WIN!')
-        socket.close()
+        broadcast('[Player2] WIN!')
+        broadcast('3')
+        shut()
     else:
-        broadcast('![Player3] WIN!')
-        socket.close()
+        broadcast('[Player3] WIN!')
+        broadcast('3')
+        shut()
 
 
 
@@ -1384,11 +1359,19 @@ server_socket.listen(5)
 connected_clients = []
 connect_clients = {}
 
+def shut():
+    server_socket.close()
+
+def start_game():
+    broadcast('Game is starting.\n')
+    broadcast('Dealing cards...')
+    start()
+
 def sendrev(name,message):
     IP = connect_clients[name]
     IP.send(str(message).encode())
     re = IP.recv(1024).decode()
-    time.sleep(0.5)
+    time.sleep(0.2)
     print(repr(re.split()))
     return re.split()
 
@@ -1410,12 +1393,13 @@ def onlysend(name,message):
         IP.send(str(message).encode())
     else:
         IP.send(message.encode())
-    time.sleep(0.5) 
+    time.sleep(0.2) 
 
 def main():
     while True:
         print('wait')
         client_socket, address = server_socket.accept()
+        print(client_socket)
         print("New connection from " + str(address))
         threading.Thread(target=handle_client, args=(client_socket,)).start()
 
@@ -1441,15 +1425,10 @@ def handle_client(client_socket):
 def broadcast(message):
     for client_socket in connected_clients:
         client_socket.send(message.encode())
-    time.sleep(0.5)
+    time.sleep(0.2)
 
-def start_game():
-    broadcast('Game is starting.\n')
-    broadcast('Dealing cards...')
-    start()
-    #waiting()
+
 
 if __name__ == '__main__':
     main()
-
 

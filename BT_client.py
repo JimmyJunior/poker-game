@@ -1,6 +1,6 @@
 import socket
-
-HOST = '192.168.178.173'
+import time
+HOST = '127.0.0.1'
 PORT = 5000
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -14,7 +14,6 @@ def slipper(choice):
         return True
     for i in range(len(choice)):
         if not choice[i].isdigit():
-            #print(choice[i],choice[i].isdigit())
             return True
     else:
         return False
@@ -22,22 +21,23 @@ def slipper(choice):
 recv = {
     '1' : '請輸入牌型:(若要第一張 --> 1 第二張 --> 2 以此類推，中間以空格間隔)',
     '2' : '請重新輸入:',
+    '3' : '遊戲結束'
 }
 # 接收 "Please enter your name (player1/player2/player3):" 消息
 message = client_socket.recv(1024).decode().strip()
 print(message)
 
-# 发送玩家名称
-#player_name = input()
-#client_socket.send(player_name.encode())
 c= True
-# 接收游戏数据
 while True:
     data = client_socket.recv(1024).decode().strip()
     if data in recv:
         data = recv[data]
         print(data)
-        choice = input().lower().split() # 接收玩家选择并发送到服务器
+        if data == '遊戲結束':
+            time.sleep(2)
+            client_socket.close()
+            break
+        choice = input().lower().split()
         c = slipper(choice) 
         while c:
             choice = input('請重新輸入:').lower().split()

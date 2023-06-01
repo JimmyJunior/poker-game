@@ -1,4 +1,3 @@
-import pickle
 from socket import *
 import threading
 from test_shuffle import *
@@ -34,13 +33,8 @@ class player:
      
     def receive(self,b,c):
         c = input('請輸入牌型:(若要第一張 --> 1 第二張 --> 2 以此類推，中間以空格間隔)').split()
-        #print(c)
-        #print(len(c))
         while ((len(c)!=1 and len(c)!=2 and len(c)!=5) or(check(c) or not check2(c))) :
             c = input('請重新輸入:').split()
-        #print(len(c))
-        #print(c)
-        #print(check(c))
         d=len(c)
         for i in range(d):
             c[i] = int(b[int(c[i])-1])
@@ -97,14 +91,6 @@ def handle_client(times, addr): #確認玩家
         send("恭喜你", addr)
     else: 
         send("輸了哈哈")
-    """if times >= 2: #確認為四個人
-        for i in range(len(IP)):
-            s.sendto('done' .encode(FORMAT), IP[i])
-            print('YES')
-    else:
-        s.sendto(f'It\'s {times} player online.'.encode(FORMAT), addr)"""
-    
-    #s.sendto(f'It\'s {times} online.'.encode(FORMAT), addr)
     
 def start(times):
     notice = True
@@ -117,21 +103,6 @@ def start(times):
         thread = threading.Thread(target=handle_client, args=(times, addr))
         thread.start()
         #handle_client(times, addr)
-    """
-    times += 1
-    if times == 1: #確認為四個人
-        handle_client(times, addr)
-        for i in range(len(IP)):
-            s.sendto('It\'s time to start.' .encode(FORMAT), IP[i])
-        notice = False
-    else:
-    for i in range(len(user)):
-        flower_hand = []
-        user[i] = player(flower_hand)
-        flower_hand = user[i].getcard(flower_hand)
-        MESSAGE = pickle.dumps(flower_hand)
-        s.sendto(MESSAGE, IP[i])
-    """
     while not s.recvfrom(1024):
         print(s.recvfrom(1024))
     s.close()  
